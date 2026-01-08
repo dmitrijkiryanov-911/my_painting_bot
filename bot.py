@@ -261,12 +261,13 @@ async def cmd_export(message: Message):
         await message.answer("Эта команда доступна только администратору.")
         return 
         
-    from storage import export_all_orders_excel
-    bio = export_all_orders_excel() 
+    bio = export_all_orders_excel()
     
     await message.answer_document(
         document=FSInputFile(bio, filename="all_orders.xlsx"),
-        caption="Вот полный список всех заказов в Excel." )
+        caption="Вот полный список всех заказов в Excel."
+    )
+
 
 # -----------------------------
 # Help
@@ -294,6 +295,7 @@ async def main():
 if __name__ == "__main__":
 
     asyncio.run(main())
+
 
 
 
