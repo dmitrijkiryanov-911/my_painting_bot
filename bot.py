@@ -15,14 +15,15 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from storage import init_db init_db()
-
 from aiogram.client.default import DefaultBotProperties
 
 from config import TOKEN, EXCEL_FILENAME
 from storage import add_order, get_orders_for_chat, parse_date_str, format_date
 
 from openpyxl import Workbook
+
+from storage import init_db
+init_db()
 
 
 # -----------------------------
@@ -151,7 +152,10 @@ async def process_confirm(message: Message, state: FSMContext):
         await state.set_state(NewOrderStates.waiting_title)
         return
 
-    if text != "все верно":
+    # Нормализуем текст
+    clean = text.replace('"', '').replace("«", "").replace("»", "").strip()
+
+    if clean not in ["все верно", "всё верно"]:
         await message.answer('Пожалуйста, отправьте "Все верно" или "/new".')
         return
 
@@ -171,6 +175,7 @@ async def process_confirm(message: Message, state: FSMContext):
         f'Забрать до: {order["date_pickup"]}',
         reply_markup=main_keyboard()
     )
+
 
 
 # -----------------------------
@@ -249,3 +254,4 @@ async def main():
 if __name__ == "__main__":
 
     asyncio.run(main())
+
