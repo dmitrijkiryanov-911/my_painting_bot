@@ -15,6 +15,8 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from storage import init_db init_db()
+
 from aiogram.client.default import DefaultBotProperties
 
 from config import TOKEN, EXCEL_FILENAME
@@ -245,4 +247,5 @@ async def main():
 
 
 if __name__ == "__main__":
+
     asyncio.run(main())
