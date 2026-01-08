@@ -8,6 +8,7 @@ from aiohttp import web
 from config import TOKEN
 from storage import get_all_orders, parse_date_str
 
+from storage import init_db init_db()
 
 async def send_reminders():
     """Отправляет напоминания пользователям."""
@@ -71,3 +72,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
