@@ -58,7 +58,7 @@ async def send_reminders():
 
 
 async def handle_run(request):
-    """HTTP endpoint для запуска напоминаний."""
+    """Обработка GET-запроса на /run — запускает напоминания."""
     await send_reminders()
     return web.Response(text="OK")
 
