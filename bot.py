@@ -62,6 +62,29 @@ def main_keyboard() -> ReplyKeyboardMarkup:
         resize_keyboard=True
     )
 
+def export_all_orders_excel() -> BytesIO:
+    orders = get_all_orders() 
+    
+    wb = Workbook() 
+    ws = wb.active
+    ws.title = "Все заказы"
+    
+    ws.append(["ID", "Название", "Дата передачи", "Срок хранения (мес)", "Дата забора", "Статус", "Chat ID"])
+    
+    for o in orders:
+        ws.append([
+            o["id"],
+            o["title"],
+            o["date_transfer"],
+            o["months"],
+            o["date_pickup"], 
+            o["status"],
+            o["chat_id"],
+        ])
+        bio = BytesIO()
+        wb.save(bio) 
+        bio.seek(0)
+        return bio
 
 # -----------------------------
 # Команды
@@ -228,6 +251,21 @@ async def my_orders(message: Message):
     )
 
 
+# Экспорт все
+
+@dp.message(Command("export"))
+async def cmd_export(message: Message): 
+    if message.chat.id != ADMIN_ID:
+        await message.answer("Эта команда доступна только администратору.")
+        return 
+        
+    from storage import export_all_orders_excel
+    bio = export_all_orders_excel() 
+    
+    await message.answer_document(
+        document=FSInputFile(bio, filename="all_orders.xlsx"),
+        caption="Вот полный список всех заказов в Excel." )
+
 # -----------------------------
 # Help
 # -----------------------------
@@ -254,4 +292,5 @@ async def main():
 if __name__ == "__main__":
 
     asyncio.run(main())
+
 
