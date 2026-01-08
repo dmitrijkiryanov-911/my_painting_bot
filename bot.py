@@ -81,10 +81,12 @@ def export_all_orders_excel() -> BytesIO:
             o["status"],
             o["chat_id"],
         ])
-        bio = BytesIO()
-        wb.save(bio) 
-        bio.seek(0)
-        return bio
+
+    # ← ВАЖНО: эти строки должны быть ВНЕ цикла
+    bio = BytesIO()
+    wb.save(bio) 
+    bio.seek(0)
+    return bio
 
 # -----------------------------
 # Команды
@@ -292,5 +294,6 @@ async def main():
 if __name__ == "__main__":
 
     asyncio.run(main())
+
 
 
