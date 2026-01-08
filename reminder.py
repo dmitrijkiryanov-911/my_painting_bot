@@ -3,6 +3,7 @@ from datetime import date
 
 from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
+from aiohttp import web
 
 from config import TOKEN
 from storage import get_all_orders, parse_date_str
@@ -25,7 +26,6 @@ async def send_reminders():
         pickup_date = parse_date_str(o["date_pickup"])
         delta_days = (pickup_date - today).days
 
-        # Только 7, 2 и 0 дней
         if delta_days not in (7, 2, 0):
             continue
 
@@ -43,7 +43,7 @@ async def send_reminders():
                 f'Напоминание: через 2 дня нужно забрать картину "{title}".\n'
                 f"Дата забора: {pickup_str}"
             )
-        else:  # delta_days == 0
+        else:
             text = (
                 f'Сегодня крайний день забрать картину "{title}".\n'
                 f"Дата забора: {pickup_str}"
@@ -57,5 +57,17 @@ async def send_reminders():
     await bot.session.close()
 
 
+async def handle_run(request):
+    """HTTP endpoint для запуска напоминаний."""
+    await send_reminders()
+    return web.Response(text="OK")
+
+
+def main():
+    app = web.Application()
+    app.router.add_get("/run", handle_run)
+    web.run_app(app, port=10000)
+
+
 if __name__ == "__main__":
-    asyncio.run(send_reminders())
+    main()
